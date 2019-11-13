@@ -98,7 +98,7 @@ function toContinueOrNot()
     temp=2000;
     while [ $temp != 0  ]
     do  
-      read -p "You want to continue or Not :" choice
+      read -p "For continue Press 1 for YES or Press 0 for NO :" choice
       yes=1;
       no=0;
       case $choice in $yes )
