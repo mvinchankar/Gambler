@@ -1,79 +1,99 @@
 #!/bin/bash -x
-echo Welcome Gambler
-read -p "How Many Days you want to play" numberDays
-totalAmount=0;
+
+echo "Welcome Gambler"
+
+read -p "Enter number of days : " Days
+read -p "How many times do you want to play : " play
+
 stake=100;
-cash=100;
+bet=0;
+cash=0;
+win=1;
+stakeMax=0;
+stakeLow=0;
+totalStake=100;
+totalWin=0;
+totalLose=0;
+totalCashWin=0;
+totalCashLose=0;
 dayWin=0;
-dayloss=0;
-maxLimit=0;
-lowLimit=0;
-totalInvestment=0;
-lossAmount=0;
-winAmount=0;
-
-function limitsOfStakes()
-{
- maxLimit=$(($cash + $cash/2 ))
- lowLimit=$(($cash - $cash/2 ))
+dayLoss=0;
+cash1=100;
+bets=0;
+function limit () {
+	stakeMax=$(( $cash + $cash / 2 ))
+	stakeLow=$(( $cash / 2 ))
 }
 
-function bet()
-{
- for(( j=1; j<=numberDays; j++ ))
- do 
-  
-    #read -p "How many times you want to play :" playTimes
-    while [ $cash != 0 ] 
-    do 
-      bet=$((RANDOM%2))
-      if [ $bet == 1 ]
-      then 
-         cash=$(( $cash + 1 )) 
-         if [ $cash == $maxLimit ]
-         then 
-            break
-         fi
-      else
-         cash=$(( $cash - 1 ))
-         if [ $cash == $lowLimit ]
-         then 
-             break
-         fi  
-      fi
-    done
-    echo DayCash: $cash
-    if [ $cash == $maxLimit ]
-    then 
-        dayWin=$(($dayWin + 1))
-    else
-        dayLoss=$(($dayLoss + 1))
-    fi
-    echo DayWin:$dayWin  DayLoss:$dayLoss 
-    totalAmount=$(($totalAmount+$cash))
-    echo Day limit Reached
-  
- done
- 
- echo $totalAmount
-}
+function bet() {
+ for (( counter=1; counter<=$Days; counter++ ))
+ do
+        
+        cash=$(( $cash + $totalStake ))  
+        limit $cash
+        while [ $bets != $play ]
+	do	
+                bets=$(($bets+1))
+		if [ $(( RANDOM%2 )) -eq $win ]
+		then
+		   cash=$(( $cash + 1 ))  
+                   if [ $cash == $stakeMax ]
+	           then
+			break
+		   fi
+	       	else
+		  cash=$(( $cash - 1 ))
+		  if [ $cash == $stakeLow ]
+		  then
+			break
+		  fi
+		fi
+        
+	done
+        cal=$(( $stake - 100 ))
+        if [ $cal -gt 0 ]
+	then
+		totalWin=$(( $totalWin + 1 ))
+	else
+		totalLose=$(( $totalLose + 1 ))
+	fi
+        bets=0;
 
-function totalInvestmentForDays()
-{
-echo Cash: $stake  Days :$numberDays
-totalInvestment=$(($stake*$numberDays))
-echo TotalInvestment:$totalInvestment
-if [ $totalAmount -lt $totalInvestment ]
+		if [ $cash -eq $stakeMax ]
+		then
+			totalWin=$(( $totalWin + 1 ))
+		fi
+
+		if [ $cash -eq $stakeLow ]
+		then
+			totalLose=$(( $totalLose + 1 ))
+		fi
+         
+        if [ $cash -gt $totalStake ]
+        then 
+            dayWin=$(($dayWin + 1))
+            echo DayWin:$dayWin
+        else
+            dayLoss=$(($dayLoss + 1))
+            echo DayLoss:$dayLoss
+        fi
+echo TotalWin:$totalWin
+echo TotalLose:$totalLose
+done
+totalGamblePerform=$(( $cash ))
+echo TotalGamblePerform:$totalGamblePerform
+
+
+totalDayStake=$(( $cash1 * $Days ))
+
+if [ $totalGamblePerform -gt $totalDayStake ]
 then
-    lossAmount=$(($totalInvestment-$totalAmount))
-    echo Loss:$lossAmount
+	totalCashWin=$(( $totalGamblePerform - $totalDayStake ))
+        echo TotalCAshWin$totalCashWin
 else
-    winAmount=$(($totalAmount-$totalInvestment))
-    echo Win:$winAmount
+	totalCashLose=$(( $totalDayStake - $totalGamblePerform))
+        echo TotalCashLoss$totalCashLose 
 fi
 }
-
-limitsOfStakes
+limit 
 bet
-totalInvestmentForDays
-
