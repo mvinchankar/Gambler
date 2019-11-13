@@ -2,40 +2,46 @@
 echo Welcome Gambler
 read -p "How Many Days you want to play" numberDays
 totalAmount=0;
+cash=100;
+maxLimit=0;
+lowLimit=0;
+function limitsOfStakes()
+{
+ maxLimit=$(($cash + $cash/2 ))
+ lowLimit=$(($cash - $cash/2 ))
+}
+
 function bet()
 {
-
-for(( j=1; j<=numberDays; j++ ))
-do 
+ for(( j=1; j<=numberDays; j++ ))
+ do 
   
-  #read -p "How many times you want to play :" playTimes
-  cash=100;
-  while [ $cash != 0 ] 
-  do 
-    bet=$((RANDOM%2))
-    if [ $bet == 1 ]
-    then 
-        cash=$(( $cash + 1 )) 
-       # echo You Win $cash
-        if [ $cash == 150 ]
-        then 
+    #read -p "How many times you want to play :" playTimes
+    while [ $cash != 0 ] 
+    do 
+      bet=$((RANDOM%2))
+      if [ $bet == 1 ]
+      then 
+         cash=$(( $cash + 1 )) 
+         if [ $cash == $maxLimit ]
+         then 
             break
-        fi
-    else
-        cash=$(( $cash - 1 ))
-       # echo You Lose $cash
-        if [ $cash == 50 ]
-        then 
-            break
-        fi  
-    fi
-  done
-  echo DayCash: $cash 
-  totalAmount=$(($totalAmount+$cash))
-  echo Day limit Reached
+         fi
+      else
+         cash=$(( $cash - 1 ))
+         if [ $cash == $lowLimit ]
+         then 
+             break
+         fi  
+      fi
+    done
+    echo DayCash: $cash 
+    totalAmount=$(($totalAmount+$cash))
+    echo Day limit Reached
   
-done
-echo $totalAmount
+ done
+ echo $totalAmount
 }
+limitsOfStakes
 bet
 
