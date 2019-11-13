@@ -10,9 +10,15 @@ do
   cash=100;
   while [ $cash != 0 ] 
   do 
-    
-    cash=$(( $cash - 1 )) 
-    echo $cash
+    bet=$((RANDOM%2))
+    if [ $bet == 1 ]
+    then 
+        cash=$(( $cash + 1 )) 
+        echo You Win $cash
+    else
+        cash=$(( $cash - 1 ))
+        echo You Lose $cash
+    fi
   done
 done
 }
