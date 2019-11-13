@@ -7,93 +7,91 @@ read -p "How many times do you want to play : " play
 
 stake=100;
 bet=0;
-cash=0;
+cash=100;
 win=1;
 stakeMax=0;
 stakeLow=0;
-totalStake=100;
+totalStake=0;
 totalWin=0;
 totalLose=0;
 totalCashWin=0;
 totalCashLose=0;
-dayWin=0;
-dayLoss=0;
-cash1=100;
-bets=0;
-function limit () {
-	stakeMax=$(( $cash + $cash / 2 ))
-	stakeLow=$(( $cash / 2 ))
+perDayWin=0;
+perDayLose=0;
+luckyDay=0;
+unluckyDay=0;
+luckiestDay=0;
+unluckiestDay=0;
+
+function stakePercentage () {
+	stakeMax=$(( $stake + $stake / 2 ))
+	stakeLow=$(( $stake / 2 ))
 }
 
-function bet() {
- for (( counter=1; counter<=$Days; counter++ ))
- do
-        
-        cash=$(( $cash + $totalStake ))  
-        limit $cash
-        while [ $bets != $play ]
-	do	
-                bets=$(($bets+1))
-		if [ $(( RANDOM%2 )) -eq $win ]
+stakePercentage
+
+for (( counter=0; counter<$Days; counter++ ))
+do
+	while [ $bet -ne $play  ]
+	do
+		bet=$(( $bet + 1 ))
+		randomCheck=$(( RANDOM%2 ))
+		if [ $randomCheck -eq $win ]
 		then
-		   cash=$(( $cash + 1 ))  
-                   if [ $cash == $stakeMax ]
-	           then
-			break
-		   fi
-	       	else
-		  cash=$(( $cash - 1 ))
-		  if [ $cash == $stakeLow ]
-		  then
-			break
-		  fi
+			stake=$(( $stake + 1 ))
+         if [ $stake == $stakeMax ]
+			then
+				break
+			fi
+		else
+			stake=$(( $stake - 1 ))
+			if [ $stake == $stakeLow ]
+			then
+				break
+			fi
 		fi
-        
 	done
-        cal=$(( $stake - 100 ))
-        if [ $cal -gt 0 ]
+	cal=$(( $stake - 100 ))
+
+	if [ $cal -gt $luckiestDay ]
+	then
+		luckyDay=$counter
+		luckiestDay=$cal
+		echo "Day" $counter
+		echo "lucky Day" $cal
+	fi
+
+	if [ $cal -lt $unluckiestDay ]
+	then
+		unluckyDay=$counter
+		unluckiestDay=$cal
+		echo "Day" $counter
+		echo "unlucky Day" $cal
+	fi
+
+	if [ $cal -gt 0 ]
 	then
 		totalWin=$(( $totalWin + 1 ))
 	else
 		totalLose=$(( $totalLose + 1 ))
 	fi
-        bets=0;
 
-		if [ $cash -eq $stakeMax ]
-		then
-			totalWin=$(( $totalWin + 1 ))
-		fi
-
-		if [ $cash -eq $stakeLow ]
-		then
-			totalLose=$(( $totalLose + 1 ))
-		fi
-         
-        if [ $cash -gt $totalStake ]
-        then 
-            dayWin=$(($dayWin + 1))
-            echo DayWin:$dayWin
-        else
-            dayLoss=$(($dayLoss + 1))
-            echo DayLoss:$dayLoss
-        fi
-echo TotalWin:$totalWin
-echo TotalLose:$totalLose
+	bet=0
+	totalStake=$(( $totalStake + $stake ))
 done
-totalGamblePerform=$(( $cash ))
-echo TotalGamblePerform:$totalGamblePerform
 
+echo $totalStake
 
-totalDayStake=$(( $cash1 * $Days ))
+totalDayStake=$(( $cash * $Days ))
 
-if [ $totalGamblePerform -gt $totalDayStake ]
+if [ $totalStake -gt $totalDayStake ]
 then
-	totalCashWin=$(( $totalGamblePerform - $totalDayStake ))
-        echo TotalCAshWin$totalCashWin
+	totalCashWin=$(( $totalStake - $totalDayStake ))
 else
-	totalCashLose=$(( $totalDayStake - $totalGamblePerform))
-        echo TotalCashLoss$totalCashLose 
+	totalCashLose=$(( $totalDayStake - $totalStake ))
 fi
-}
-limit 
-bet
+
+echo "day Wins" $totalWin
+echo "day lose" $totalLose
+echo "lucky Day" $luckiestDay
+echo "unlucky Day" $unluckiestDay
