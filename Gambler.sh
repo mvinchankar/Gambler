@@ -27,9 +27,7 @@ function stakePercentage () {
 	stakeMax=$(( $stake + $stake / 2 ))
 	stakeLow=$(( $stake / 2 ))
 }
-
-stakePercentage
-
+function Gamble() {
 for (( counter=0; counter<$Days; counter++ ))
 do
 	while [ $bet -ne $play  ]
@@ -90,8 +88,31 @@ then
 else
 	totalCashLose=$(( $totalDayStake - $totalStake ))
 fi
-
-echo "day Wins" $totalWin
-echo "day lose" $totalLose
 echo "lucky Day" $luckiestDay
 echo "unlucky Day" $unluckiestDay
+}
+function toContinueOrNot()
+{
+ if [ $totalCashWin -gt 0 ]
+ then
+    temp=2000;
+    while [ $temp != 0  ]
+    do  
+      read -p "You want to continue or Not :" choice
+      yes=1;
+      no=0;
+      case $choice in $yes )
+         for (( i=0; i<=1; i++ ))
+         do
+         stakePercentage
+         Gamble
+         done;;
+                    $no )
+         break;;
+      esac
+    done
+ fi  
+}
+stakePercentage
+Gamble
+toContinueOrNot
